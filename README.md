@@ -7,7 +7,7 @@
 <p align="center">A Minecraft Fabric Utility Mod based on Meteor Client.</p>
 
 ## Usage
-
+    - Use IQ
 ### Building
 - Clone this repository
 - Run `./gradlew build`
