@@ -1,0 +1,31 @@
+package qwq.wumie.mixin;
+
+import meteordevelopment.meteorclient.systems.modules.Modules;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.RotationAxis;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import qwq.wumie.systems.modules.render.Rendering;
+
+@Environment(EnvType.CLIENT)
+@Mixin(LivingEntityRenderer.class)
+public class LivingEntityRendererMixin {
+
+    @Inject(method = "setupTransforms", at = @At(value = "TAIL"))
+    private void dinnerboneEntities(LivingEntity entity, MatrixStack matrices, float _animationProgress, float _bodyYaw, float _tickDelta, CallbackInfo _info) {
+        Rendering renderingModule = Modules.get().get(Rendering.class);
+        if (renderingModule == null) return;
+        if ((!(entity instanceof PlayerEntity)) && renderingModule.dinnerboneEnabled()) {
+            matrices.translate(0.0D, entity.getHeight() + 0.1F, 0.0D);
+            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0F));
+        }
+    }
+
+}

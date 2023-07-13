@@ -1,0 +1,44 @@
+{
+  "required": true,
+  "package": "qwq.wumie.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "plugin": "meteordevelopment.meteorclient.MixinPlugin",
+  "client": [
+    "ClientPlayerInteractionManagerMixin",
+    "Deadmau5FeatureRendererMixin",
+    "EntityMixin",
+    "FramebufferMixin",
+    "GameRendererMixin",
+    "GlDebugMixin",
+    "LivingEntityMixin",
+    "LivingEntityRendererMixin",
+    "LoginHelloC2SPacketMixin",
+    "MinecraftClientMixin",
+    "MultiplayerScreenMixin",
+    "PlayerEntityRendererMixin",
+    "PlayerMoveC2SPacketMixin",
+    "RenderSystemMixin",
+    "ScreenMixin",
+    "StructureVoidBlockMixin",
+    "SwordItemMixin",
+    "TexturedRenderLayersMixin",
+    "TitleScreenMixin",
+    "VillagerInteractMixin",
+    "WindowMixin",
+    "baritone.MineProcessMixin",
+    "via.MixinAllowedAddressResolver",
+    "via.MixinClientConnection",
+    "via.MixinClientConnectionAccessor",
+    "via.MixinClientConnectionChInit",
+    "via.MixinDebugHud",
+    "via.MixinMultiplayerServerListPingerListener",
+    "via.MixinServerEntry",
+    "via.MixinServerInfo",
+    "via.MixinServerNetworkIoChInit"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+  ]
+}

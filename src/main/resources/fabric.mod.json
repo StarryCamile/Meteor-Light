@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "name": "Meteor Client",
+  "id": "meteor-client",
+  "version": "${version}",
+  "description": "Based utility mod.",
+  "authors": [
+    "MineGame159",
+    "squidoodly",
+    "seasnail",
+    "WuMie"
+  ],
+  "contact": {
+    "homepage": "https://github.com/ImWuMie/Meteor-Light",
+    "issues": "https://github.com/ImWuMie/Meteor-Light/issues",
+    "sources": "https://github.com/ImWuMie/Meteor-Light"
+  },
+  "license": "LGPL-114514",
+  "icon": "assets/meteor-client/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "meteordevelopment.meteorclient.MeteorClient"
+    ]
+  },
+  "mixins": [
+    "meteor-client.mixins.json",
+    "meteor-client-baritone.mixins.json",
+    "meteor-client-indigo.mixins.json",
+    "meteor-client-sodium.mixins.json",
+    "meteor-client-canvas.mixins.json",
+    "meteor-client-addon.mixins.json",
+    "meteor-client-lithium.mixins.json"
+  ],
+  "accessWidener": "meteor-client.accesswidener",
+  "custom": {
+    "meteor-client:devbuild": "${devbuild}",
+    "meteor-client:color": "145,61,226",
+    "meteor-client:commit": "${commit}",
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "none"
+      }
+    }
+  },
+  "depends": {
+    "java": ">=17",
+    "minecraft": "1.20",
+    "fabricloader": ">=0.14.21"
+  },
+  "breaks": {
+    "optifabric": "*",
+    "feather": "*",
+    "origins": "*",
+    "wurst": "*"
+  }
+}

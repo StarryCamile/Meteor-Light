@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.minecraft.client.gui.screen.advancement",
+  "refmap": "meteor-client-refmap.json",
+  "minVersion": "0.6",
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
