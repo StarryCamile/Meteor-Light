@@ -1,0 +1,227 @@
+plugins {
+    id "fabric-loom" version "1.2-SNAPSHOT"
+    id 'maven-publish'
+    id "org.ajoberstar.grgit" version "3.1.1"
+    id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "com.modrinth.minotaur" version "2.2.0"
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id "com.github.ben-manes.versions" version "0.42.0"
+}
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version + (project.hasProperty("devbuild") ? ("-" + project.findProperty("devbuild")) : "")
+group = project.maven_group
+
+repositories {
+    mavenLocal()
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://ladysnake.jfrog.io/artifactory/mods'
+    }
+    maven {
+		name = "meteor-maven"
+		url = "https://maven.meteordev.org/releases"
+	}
+    maven {
+        name = "meteor-maven-snapshots"
+        url = "https://maven.meteordev.org/snapshots"
+    }
+    maven {
+        name = "vram"
+        url = "https://maven.vram.io//"
+    }
+
+    maven {
+        name = "seedfinding-maven"
+        url "https://maven.seedfinding.com/"
+    }
+    maven {
+        name = "seedfinding-maven-snapshots"
+        url "https://maven-snapshots.seedfinding.com/"
+    }
+    maven {
+        name = "modrinth"
+        url = "https://api.modrinth.com/maven"
+
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+    maven { url 'https://jitpack.io' }
+    maven { url "https://maven.shedaniel.me/" }
+    maven { url "https://maven.latticg.com/" }
+    maven { url 'https://repo.viaversion.com/' }
+    //maven { url = "https://maven.legacyfabric.net/" }
+    maven { url = "https://maven.terraformersmc.com/releases/" }
+    mavenCentral()
+}
+
+configurations {
+    // include mods
+    modImplementation.extendsFrom(modInclude)
+    include.extendsFrom(modInclude)
+
+    // include libraries
+    implementation.extendsFrom(library)
+    shadow.extendsFrom(library)
+}
+
+dependencies {
+    implementation(include("org.java-websocket:Java-WebSocket:1.5.3")) {transitive = false}
+
+	// Fabric
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modInclude fabricApi.module("fabric-resource-loader-v0", project.fapi_version)
+
+	// Compat fixes
+    modCompileOnly fabricApi.module("fabric-renderer-indigo", project.fapi_version)
+    modCompileOnly("maven.modrinth:sodium:${project.sodium_version}") { transitive = false }
+    modCompileOnly("maven.modrinth:lithium:${project.lithium_version}") { transitive = false }
+    modCompileOnly("maven.modrinth:iris:${project.iris_version}") { transitive = false }
+    //modCompileOnly("io.vram:canvas-fabric-mc119:1.0.+") { transitive = false } // TODO: 1.19.3
+
+    // Baritone (https://github.com/MeteorDevelopment/baritone)
+    modInclude "baritone:fabric:${project.minecraft_version}-SNAPSHOT"
+
+    // Libraries
+    library "meteordevelopment:orbit:${project.orbit_version}"
+    library "meteordevelopment:starscript:${project.starscript_version}"
+    library "meteordevelopment:discord-ipc:${project.discordipc_version}"
+    library "org.reflections:reflections:${project.reflections_version}"
+    library("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }
+    library("io.netty:netty-codec-socks:${project.netty_version}") { transitive = false }
+    library "com.github.LlamaLad7.MixinExtras:mixinextras-fabric:${project.mixin_extras_version}"
+    annotationProcessor "com.github.LlamaLad7.MixinExtras:mixinextras-fabric:${project.mixin_extras_version}"
+
+    // new features
+
+    // seed .locate and ore sim
+    library("com.seedfinding:mc_math:${project.mc_seedfinding_version}")
+    library("com.seedfinding:mc_seed:${project.mc_seedfinding_version}")
+    library("com.seedfinding:mc_core:${project.mc_seedfinding_version}")
+    library("com.seedfinding:mc_noise:${project.mc_seedfinding_version}")
+    library("com.seedfinding:mc_biome:${project.mc_seedfinding_version}")
+    library("com.seedfinding:mc_terrain:${project.mc_seedfinding_version}")
+    library("com.seedfinding:mc_feature:${project.mc_seedfinding_version}")
+    library("com.seedfinding:mc_reversal:${project.mc_seedfinding_version}")
+    library("com.seedfinding:latticg:${project.latticg_seedfinding_version}")
+
+    // seedcracker api
+    implementation (include('com.github.19MisterX98.SeedcrackerX:seedcrackerx-api:2.10.1')) {transitive = false}
+    //viaversion
+    implementation (include("com.viaversion:viaversion:${project.viaversion_version}")) {transitive = false}
+    implementation (include("com.viaversion:viarewind-all:${project.viarewindall_version}")) {transitive = false}
+    implementation (include("com.viaversion:viabackwards:${project.viabackwards_version}")) {transitive = false}
+    implementation (include("org.yaml:snakeyaml:${project.snakeyaml_version}")) {transitive = false}
+
+    // http api
+    implementation (include("com.squareup.okhttp3:okhttp:4.10.0")) {transitive = false}
+    library('com.squareup.okio:okio:3.3.0')
+
+    //modInclude("io.github.ladysnake:satin:1.11.0") TODO: Removed
+
+    // Launch sub project
+    shadow project(":launch")
+}
+
+afterEvaluate {
+    migrateMappings.configure {
+        outputDir = project.file("src/main/java")
+    }
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/meteor-client.accesswidener")
+}
+
+shadowJar {
+    configurations = [ project.configurations.shadow ]
+
+    dependencies {
+        exclude {
+            it.moduleGroup == "org.slf4j"
+        }
+    }
+}
+
+processResources {
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+               "devbuild": project.findProperty("devbuild") ?: "",
+               "commit": project.findProperty("commit") ?: ""
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding("UTF-8")
+}
+
+jar {
+	from "LICENSE"
+
+	manifest {
+		attributes("Main-Class": "meteordevelopment.meteorclient.Main")
+	}
+}
+
+remapJar {
+    dependsOn shadowJar
+    inputFile.set(shadowJar.archiveFile)
+}
+
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.encoding = "UTF-8"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier.set("sources")
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    archiveClassifier.set("javadoc")
+    from javadoc
+}
+
+
+publishing {
+    publications {
+        java(MavenPublication) {
+            artifactId = "meteor-light"
+            version = project.hasProperty("devbuild") ? (project.mod_version + "-SNAPSHOT") : project.mod_version
+
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+
+            artifact(javadocJar) {
+                builtBy javadocJar
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "meteor-maven"
+            url = project.hasProperty("devbuild") ? "https://maven.meteordev.org/snapshots" : "https://maven.meteordev.org/releases"
+
+            credentials {
+                username = System.getenv("MAVEN_METEOR_ALIAS")
+                password = System.getenv("MAVEN_METEOR_TOKEN")
+            }
+
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}
